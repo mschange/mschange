@@ -1,0 +1,23 @@
+name: GitHub-Profile-3D-Contrib
+
+on:
+  schedule: # 每天 18:00 UTC (北京时间凌晨2点) 自动更新一次
+    - cron: "0 18 * * *"
+  workflow_dispatch: # 允许你在 Actions 页面手动点击运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: generate-github-profile-3d-contrib
+    steps:
+      - uses: actions/checkout@v3
+      - uses: yoshi389111/github-profile-3d-contrib@0.7.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: ${{ github.repository_owner }} # 这里会自动识别你的用户名，无需修改
+      - name: Commit & Push
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add -A .
+          git diff --staged --exit-code || (git commit -m "generated" && git push)
